@@ -4,6 +4,7 @@
 %global debug_package       %{nil}
 %define __provides_exclude_from ^.*$
 
+%define device_rpm_architecture_string armv7hl
 %define _target_cpu %{device_rpm_architecture_string}
 
 Name:          droidmedia
