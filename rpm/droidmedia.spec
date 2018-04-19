@@ -15,6 +15,7 @@ License:       ASL 2.0
 BuildRequires: ubu-trusty
 BuildRequires: sudo-for-abuild
 BuildRequires: droid-bin-src-full
+BuildRequires: droid-hal-devel
 Source0:       %{name}-%{version}.tgz
 AutoReqProv:   no
 
@@ -54,7 +55,11 @@ echo FORCE_HAL := %{force_hal} >> external/droidmedia/env.mk
 
 %build
 
-if (grep -qi '^BOARD_QTI_CAMERA_32BIT_ONLY := true' device/*/*/*.mk) || %{?droidmedia_32bit:1}%{!?droidmedia_32bit:0}; then
+if (grep -qi 'COMMON_GLOBAL_CFLAGS' $RPM_BUILD_ROOT/%{_libdir}/droid-devel/droid-headers/android-config.h)
+echo Thunderbirds are go
+fi
+
+if (grep -qi '^BOARD_QTI_CAMERA_32BIT_ONLY := true' device/*/*/*.mk) || (grep -qi 'something.that.doesnt.exist' $RPM_BUILD_ROOT/%{_libdir}/droid-devel/droid-headers/android-config.h); then
 echo DROIDMEDIA_32 := true >> external/droidmedia/env.mk
 droid-make %{?_smp_mflags} libdroidmedia_32 minimediaservice minisfservice libminisf_32
 else
