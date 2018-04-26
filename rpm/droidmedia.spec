@@ -54,6 +54,33 @@ echo FORCE_HAL := %{force_hal} >> external/droidmedia/env.mk
 
 %build
 
+%define defined yep
+
+echo test1
+if (grep -qi 'something.that.doesnt.exist' device/*/*/*.mk) || %{?undefined:1}%{!?undefined:0}; then
+echo cond1 = false, cond2 = false, we should never see this
+fi
+echo test2
+if (grep -qi 'a' device/*/*/*.mk) || %{?undefined1:1}%{!?undefined1:0}; then
+echo cond1 = true, cond2 = false, we should always see this
+fi
+echo test3
+if (grep -qi 'something.that.doesnt.exist' device/*/*/*.mk) || %{?defined:1}%{!?defined:0}; then
+echo cond1 = false, cond2 = true, we should always see this
+fi
+echo test4
+if (grep -qi 'a' device/*/*/*.mk) || %{?defined:1}%{!?defined:0}; then
+echo cond1 = true, cond2 = true, we should always see this
+fi
+echo test5
+if (grep -qi 'something.that.doesnt.exist' device/*/*/*.mk) || %{?droidmedia_32bit:1}%{!?droidmedia_32bit:0}; then
+echo cond1 = false, cond2 = depends, we should only see this, when droidmedia_32bit is defined
+fi
+echo test6
+if (grep -qi 'a' device/*/*/*.mk) || %{?droidmedia_32bit:1}%{!?droidmedia_32bit:0}; then
+echo cond1 = true, cond2 = depends, we should always see this
+fi
+
 if (grep -qi '^BOARD_QTI_CAMERA_32BIT_ONLY := true' device/*/*/*.mk) || %{?droidmedia_32bit:1}%{!?droidmedia_32bit:0}; then
 echo DROIDMEDIA_32 := true >> external/droidmedia/env.mk
 droid-make %{?_smp_mflags} libdroidmedia_32 minimediaservice minisfservice libminisf_32
